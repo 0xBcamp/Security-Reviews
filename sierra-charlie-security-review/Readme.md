@@ -7,7 +7,7 @@ pragma solidity 0.8.18;
 
 ```
 
-#### The compiler version used to compile the contract by the EVM compiler.
+- The compiler version used to compile the contract by the EVM compiler.
 
 ## Interface
 
