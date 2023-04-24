@@ -1,19 +1,21 @@
 # BCAMP CHARLIE SMART CONTRACT SECURITY REVIEW
 
-## Pragma solidity 0.8.18
+## Overview
 
-```solidity
-pragma solidity 0.8.18;
+- This document details the findings of a security review performed by Team Sierra on Team Charlie's project.
 
-```
+## Project Summary
 
-- The compiler version used to compile the contract by the EVM compiler.
+The VaultFactory Project aims to create a service that allows users to copy trades from reputed whales on different DEXs and CEX futures.
 
-## Interface
+## Table of Content
 
-- Interface is a contract that contains function signatures without the function definition implementation and it is identified using the “interface” keyword.
+- Interface
+- Proxy Smart Contract
+- Implementation Contract
+- Factory Contract
 
-## IVaultFactory.sol
+## Interface IVaultFactory.sol
 
 ```solidity
 function fireVaultEvent(
