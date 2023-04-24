@@ -1,4 +1,4 @@
-# BCAMP CHARLIE SMART CONTRACT SECURITY REVIEW
+# BCAMP Team CHARLIE SMART CONTRACT SECURITY REVIEW
 
 ## Overview
 
@@ -8,56 +8,67 @@
 
 The VaultFactory Project aims to create a service that allows users to copy trades from reputed whales on different DEXs and CEX futures.
 
-## Table of Content
+## Vulnerability Summary
 
-- Interface
-- Proxy Smart Contract
-- Implementation Contract
-- Factory Contract
+| Number of Findings |     Findings      |                            Findings Summary                            |
+| :----------------- | :---------------: | :--------------------------------------------------------------------: |
+| 0                  |   **Critical**    | Critical risks are those that impact the safe functioning ofa platform |
+|                    |                   |   and must be addressed before launch. Usersshould not invest in any   |
+|                    |                   |                project with outstanding criticalrisks.                 |
+|                    |                   |                                                                        |
+| 0                  |     **Major**     | Major risks can include centralization issues and logicalerrors. Under |
+|                    |                   |   specific circumstances, these major riskscan lead to loss of funds   |
+|                    |                   |                     and/or control of the project.                     |
+|                    |                   |                                                                        |
+| 0                  |    **Medium**     | Medium risks may not pose a direct risk to users’ funds, but they can  |
+|                    |                   |             affect the overall functioning of a platform.              |
+|                    |                   |                                                                        |
+| 2                  |     **Minor**     |      Minor risks can be any of the above, but on a smaller scale.      |
+|                    |                   | They generally do not compromise the overallintegrity of the project,  |
+|                    |                   |          but they may be less efficient thanother solutions.           |
+|                    |                   |                                                                        |
+| 3                  | **Informational** | Informational errors are often recommendations to improve the style of |
+|                    |                   | the code or certain operations to fallwithin industry best practices.  |
+|                    |                   |     They usually do not affectthe overall functioning of the code.     |
 
-## Interface IVaultFactory.sol
+## Findings
 
-```solidity
-function fireVaultEvent(
-  address proxy,
-  bytes32 name,
-  address trader,
-  bool inverseCopyTrade,
-  uint16 copySizeBPS,
-  address defaultCollateral
-) external;
+- 1.0 Underflow/overflow
+- 1.2 Usage Of transfer() For Sending ETH
+- 1.3 Unused return value
+- 1.4 unchecked address(0)
 
-```
+## Code Base
 
-### The Vulnerability
+- [https://github.com/0xBcamp/Charlie]
 
-- There is no comment on the contract
+## Security Review Scope
 
-### Preventative Techniques
+- Team Charlie Smart Contract
 
-- Contract codes should always be commented out to aid readility of the Smart contract
+## Approach and Method
 
-## VaultProxy.sol
+This report has been prepared for Bcamp Team Charlie - BcTC to discover issues and vulnerabilities in the source code of the Team Charlie project as well as any contract dependencies that were not part of an officially recognized library. A good examination has been performed, utilizing Manual Review.
 
-```solidity
-contract VaultProxy is ERC1967Proxy, OwnableUpgradeable {
-  constructor(address initialImpl) ERC1967Proxy(initialImpl, "") initializer {
-    _upgradeTo(initialImpl);
-    __Ownable_init();
-  }
-}
+#### The auditing process pays special attention to the following considerations:
 
-```
+- Testing the smart contracts against both common and uncommon attack vectors.
+- Assessing the codebase to ensure compliance with current best practices and industry standards.
+- Ensuring contract logic meets the specifications and intentions of the client.
+- Cross referencing contract structure and implementation against similar smart contracts produced by industryleaders.
+- Thorough line-by-line manual review of the entire codebase by industry experts.
 
-### The Vulnerability
+#### The security assessment resulted in findings that ranged from critical to informational. We recommend addressing these findings to ensure a high level of security standards and industry practices. We suggest recommendations that could better serve the project from the security perspective:
 
-- There is no comment on the contract
+- Testing the smart contracts against both common and uncommon attack vectors;
+- Enhance general coding practices for better structures of source codes;
+- Add enough unit tests to cover the possible use cases;
+- Provide more comments per each function for readability, especially contracts that are verified in public;
+- Provide more transparency on privileged activities once the protocol is live.
 
-### Preventative Techniques
+## UnderFlow/OverFlow Bug- Minor
 
-- Contract codes should always be commented out to aid readility of the Smart contract
-
-## VaultImplementationV1.sol
+### Implementation Contract: VaultImplementationV1.sol
 
 ```solidity
 function withDrawProfit(
@@ -79,17 +90,26 @@ function withDrawProfit(
 
 ```
 
+```solidity
+function withdrawETH(address recepient) public onlyOwner {
+  payable(vaultFactory).transfer(
+    (address(this).balance * MANAGEMENT_FEE) / BASIS_POINTS_DIVISOR
+
+```
+
 ### The Vulnerability
 
-- There is no comment on the contract
+- Possible underflow/overflow bug on function withDrawProfit() when performing arithematic operation on (amount \* (BASIS_POINTS_DIVISOR - MANAGEMENT_FEE)) / BASIS_POINTS_DIVISOR.
 
-- Possible underflow/overflow bug on function withDrawProfit()
+- Possible underflow/overflow bug on function withdrawETH() when performing arithematic operation on (address(this).balance \* MANAGEMENT_FEE) / BASIS_POINTS_DIVISOR
 
 ### Preventative Techniques
 
-- Contract codes should always be commented out to aid readility of the Smart contract
+- Use of OpenZeppelin SafeMath Library provides a standard library for performing arithematic operation on uint
 
-- Use of OpenZeppelin SafeMath Library
+## Usage Of transfer() For Sending ETH - Minor
+
+### Implementation Contract: VaultImplementationV1.sol
 
 ```solidity
 function withdrawETH(address recepient) public onlyOwner {
@@ -101,29 +121,7 @@ function withdrawETH(address recepient) public onlyOwner {
 
 ```
 
-### The Vulnerability
-
-- There is no comment on the contract
-
-- No check for address zero
-
-- Possible underflow/overflow bug on function withdrawETH()
-
-- Possible Re-Entrancy attack with the use of \_to.transfer()
-
-- Unchecked return value
-
-### Preventative Techniques
-
-- Contract codes should always be commented out to aid readility of the Smart contract
-
-- Check for address zero using require(address(0), "Address zero")
-
-- Use of OpenZeppelin SafeMath Library on arimetic calculation
-
-- Use of (bool sent, bytes memory data) = \_to.call{value: msg.value}("") to check for Re-Entrancy
-
-### VaultFactory.sol
+### Factory Contract: VaultFactory.sol
 
 ```solidity
 function withdrawETH(address recepient) public onlyGov {
@@ -134,18 +132,48 @@ function withdrawETH(address recepient) public onlyGov {
 
 ### The Vulnerability
 
-- There is no comment on the contract
-
-- No check for address zero
-
 - Possible Re-Entrancy attack with the use of \_to.transfer()
+
+### Preventative Techniques
+
+- Use of (bool sent, bytes memory data) = \_to.call{value: msg.value}("") to check for Re-Entrancy or using the **Address.sendValue()** function from OpenZeppelin.Since Address.sendValue() may allow reentrancy, we also recommend guarding against reentrancy attacks by utilizingthe Checks-Effects-Interactions Pattern or applying OpenZeppelin ReentrancyGuard.
+
+## Unchecked/Unused Return Value - Informational
+
+```solidity
+returns (bool success) {}
+
+```
+
+### The Vulnerability
 
 - Unchecked return value
 
 ### Preventative Techniques
 
+- we recommend assigning return variables or writing explicit return statements to avoid implicitly returning default values.Also, if there are local variables duplicating named return variables, we recommend removing the local variables and use the return variables instead.
+
+## Unchecked address input Value against address(0x0) - Informational
+
+```solidity
+require(address != address(0x0), "Invalid Address")
+
+```
+
+### The Vulnerability
+
+- Unchecked input address
+
+### Preventative Techniques
+
+- we recommend checking for address zero (address(0)) to prevent tokens being transferred to invalid address.
+
+## commenting/coding Style - Informational
+
+### The Vulnerability
+
+- There is no comment throughout the smart contract
+
+### Preventative Techniques
+
 - Contract codes should always be commented out to aid readility of the Smart contract
-
-- Check for address zero using require(address(0), "Address zero")
-
-- Use of (bool sent, bytes memory data) = \_to.call{value: msg.value}("") to check for Re-Entrancy
