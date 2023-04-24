@@ -31,6 +31,13 @@ The VaultFactory Project aims to create a service that allows users to copy trad
 |                    |                   | the code or certain operations to fallwithin industry best practices.  |
 |                    |                   |     They usually do not affectthe overall functioning of the code.     |
 
+## Table of Content
+
+- Findings
+- Code Base
+- Scope
+- Approach and Method
+
 ## Findings
 
 - 1.0 Underflow/overflow
