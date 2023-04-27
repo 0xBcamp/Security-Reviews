@@ -57,22 +57,6 @@ The VaultFactory Project aims to create a service that allows users to copy trad
 
 This report has been prepared for Bcamp Team Charlie - BcTC to discover issues and vulnerabilities in the source code of the Team Charlie project as well as any contract dependencies that were not part of an officially recognized library. A good examination has been performed, utilizing Manual Review.
 
-#### The auditing process pays special attention to the following considerations:
-
-- Testing the smart contracts against both common and uncommon attack vectors.
-- Assessing the codebase to ensure compliance with current best practices and industry standards.
-- Ensuring contract logic meets the specifications and intentions of the client.
-- Cross referencing contract structure and implementation against similar smart contracts produced by industryleaders.
-- Thorough line-by-line manual review of the entire codebase by industry experts.
-
-#### The security assessment resulted in findings that ranged from critical to informational. We recommend addressing these findings to ensure a high level of security standards and industry practices. We suggest recommendations that could better serve the project from the security perspective:
-
-- Testing the smart contracts against both common and uncommon attack vectors;
-- Enhance general coding practices for better structures of source codes;
-- Add enough unit tests to cover the possible use cases;
-- Provide more comments per each function for readability, especially contracts that are verified in public;
-- Provide more transparency on privileged activities once the protocol is live.
-
 ## UnderFlow/OverFlow Bug- Minor
 
 ### Implementation Contract: VaultImplementationV1.sol
