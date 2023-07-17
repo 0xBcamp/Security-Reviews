@@ -46,12 +46,12 @@ The **Event Ticketing** blockchain project revolutionizes the ticketing industry
     <td>Low risks that can lead to loss of funds or control are identified.</td>
   </tr>
   <tr>
-    <td>8</td>
+    <td>9</td>
     <td><strong>Medium</strong></td>
     <td>Medium risks that affect overall platform functioning are discovered.</td>
   </tr>
   <tr>
-    <td>3</td>
+    <td>2</td>
     <td><strong>Optimization</strong></td>
     <td>No minor risks compromising the project integrity are observed.</td>
   </tr>
@@ -139,7 +139,7 @@ The **Event Ticketing** blockchain project revolutionizes the ticketing industry
 
 ## Security Review Scope
 
-- `EventTicketing.sol` smart contract
+- `EventTicketing.sol` smart contract and its dependencies
 
 ## Approach and Method
 
@@ -226,6 +226,44 @@ EventTicketing.maxTickets (../contracts/EventTicketing.sol#20) should be immutab
 ```
 
 ## **[Reference](https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable)**
+
+---
+
+### `Public` access modifier can be `External`
+
+**Severity: Medium**  
+**Description**: `public` functions that are not used internally should be marked as `external`.
+
+```solidity
+function setupTicketScannerRoles(address ticketScanner) public onlyOwner {
+  grantRole(TICKET_SCANNER_ROLE, ticketScanner);
+}
+```
+
+## **[Reference](https://gus-tavo-guim.medium.com/public-vs-external-functions-in-solidity-b46bcf0ba3ac)**
+
+---
+
+### `_setupRole` function is deprecated OpenZeppelin `AccessControl.sol`
+
+**Severity: Optimization**  
+**Description**: following the OpenZeppelin documentation `_setupRole` function that is used in constructor was deprecated, `_grantRole` should be used instead
+
+```solidity
+constructor(uint256 _maxTickets, string memory _eventLocation, string memory _eventName, uint256 _eventTime) ERC721("EventTicketing", "EVTK") {
+  maxTickets = _maxTickets;
+  eventLocation = _eventLocation;
+  eventTime = _eventTime;
+  eventName = _eventName;
+  cost = uint256(100);
+
+  _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+}
+```
+
+## **[Reference](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.9/contracts/access/AccessControl.sol#L204)**
+
+---
 
 ### Divide before multiply:
 
