@@ -1,0 +1,52 @@
+# TransactionMetadataEntry SMART CONTRACT SECURITY REVIEW
+## *Overview*
+The TransactionMetadataEntry contract aims to add metadata functionality to transactions on the Ethereum blockchain, a feature lacking in current blockchain explorers. The contract uses well-established libraries and standards such as OpenZeppelin and ERC1820, reducing the chance of common bugs and vulnerabilities. The following audit report details the findings of the security review of the TransactionMetadataEntry contract.
+
+## Project Summary
+
+A smart contract that allows users to execute transactions with metadata, enhancing the traceability and context of blockchain transactions. 
+
+## Report Scope
+
+- The scope of the audit was to verify the security of the smart contract and the codebase of the TransactionMetadataEntry contract. The audit was conducted on the following contracts:
+  - TransactionMetadataEntry
+  - IMetadataHandler 
+  - Constants
+
+
+## List of Findings
+
+- 1 major severity issue.
+- 2 informational issues.
+  
+
+| # | Title | Label | Severity |
+| --- | --- | --- | --- |
+| [M-1] | Ether sent to the contract can't be retrieved | `Logic Error` | `Major` |
+| [I-1] | Lack of events for contract activity tracking | `Best Practices` | `Informational` |
+| [I-2] | Absence of code comments for critical sections | `Best Practices` | `Informational` |
+
+## Findings
+
+ ### [M-1] Ether sent to the contract can't be retrieved 
+The functions `txmExecute` and `txmExecuteWithValue` are marked as `payable`, which means they can receive Ether. However, there doesn't seem to be a way to withdraw Ether from the contract. If Ether is sent to these functions without a corresponding transaction in `_txs` that transfers it out again, it will be stuck in the contract forever.
+
+### [I-1] Lack of events for contract activity tracking 
+The contract does not emit any events. Events are useful for tracking contract activity and auditing contract behavior. Their absence does not pose a security risk per se, but it could make it harder to identify and understand any issues that may arise.
+
+### [I-2] Absence of code comments for critical sections
+There are sections of the code, particularly around the transaction execution and metadata handling, that are complex and would benefit from additional comments explaining their purpose and how they work. This is not a security issue, but it can affect the maintainability of the code and the ability of others to understand and correctly use it.
+
+## Code Commit
+
+- [0xBcamp/tx-metadata_June2023 (github.com)]
+
+Audit methodology used in our assessment:
+
+- Manual Review
+- Static Analysis
+
+I love the project. Stay in contact!
+
+
+
